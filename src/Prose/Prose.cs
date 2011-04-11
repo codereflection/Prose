@@ -40,6 +40,7 @@ namespace Prose
             Grid.SetRow(textbox, 0);
             grid.Children.Add(textbox);
             window.Content = grid;
+            textbox.Focus();
         }
 
         protected override void OnStartup(StartupEventArgs e)
