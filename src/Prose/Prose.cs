@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Prose
 {
@@ -26,7 +27,15 @@ namespace Prose
             var grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             grid.RowDefinitions.Add(new RowDefinition());
-            var textbox = new TextBox { AcceptsReturn = true, AcceptsTab = true };
+            var textbox = new TextBox { 
+                                              AcceptsReturn = true, 
+                                              AcceptsTab = true, 
+                                              Background = Brushes.Black, 
+                                              Foreground = Brushes.Lime,
+                                              FontFamily = new FontFamily("Consolas"),
+                                              FontSize = 16.0,
+                                              TabIndex = 0
+                                              };
             Grid.SetColumn(textbox, 0);
             Grid.SetRow(textbox, 0);
             grid.Children.Add(textbox);
