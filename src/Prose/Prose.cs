@@ -21,7 +21,7 @@ namespace Prose
              base.OnStartup(e);
 
              var window = new Window();
-             //window.Text = "Prose - because code should be beautiful...";
+             window.Title = "Prose - because code should be beautiful...";
              window.Show();
         }
     }
