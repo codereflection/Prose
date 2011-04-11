@@ -1,7 +1,10 @@
 // Prose.cs
 using System;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Prose
@@ -35,15 +38,16 @@ namespace Prose
             var grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             grid.RowDefinitions.Add(new RowDefinition());
-            editor = new TextBox { 
-                                              AcceptsReturn = true, 
-                                              AcceptsTab = true, 
-                                              Background = Brushes.Black, 
-                                              Foreground = Brushes.Lime,
-                                              FontFamily = new FontFamily("Consolas"),
-                                              FontSize = 16.0,
-                                              TabIndex = 0
-                                              };
+            editor = new TextBox
+                         { 
+                             AcceptsReturn = true, 
+                             AcceptsTab = true, 
+                             Background = Brushes.Black, 
+                             Foreground = Brushes.Lime,
+                             FontFamily = new FontFamily("Consolas"),
+                             FontSize = 16.0,
+                             TabIndex = 0
+                         };
             Grid.SetColumn(editor, 0);
             Grid.SetRow(editor, 0);
             grid.Children.Add(editor);
@@ -60,6 +64,21 @@ namespace Prose
             editor.Text = content;
         }
 
+        void WriteFile()
+        {
+            string outFileName;
+
+            if (!string.IsNullOrEmpty(File))
+                outFileName = File;
+            else
+            {
+                var currentFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                outFileName = Path.Combine(currentFolder ,"out.cs");
+            }
+
+            System.IO.File.WriteAllText(outFileName, editor.Text);
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
              base.OnStartup(e);
@@ -68,7 +87,14 @@ namespace Prose
              BuildControls(window);
              SetContent();
              window.Title = "Prose - because code should be beautiful...";
+             window.KeyDown += OnKeyDown;
              window.Show();
+        }
+
+        void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if ((Keyboard.Modifiers == ModifierKeys.Control) && (e.Key == Key.S))
+                WriteFile();
         }
     }
 }
