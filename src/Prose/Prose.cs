@@ -9,9 +9,13 @@ namespace Prose
     public class EntryPoint
     {
         [STAThread]
-        public static void Main()
+        public static void Main(string[] args)
         {
             var app = new ProseApplication();
+
+            if (args.Length > 0)
+                app.File = args[0];
+
             app.Run();
         }
     }
@@ -22,12 +26,16 @@ namespace Prose
         {
         }
 
+        public string File { get; set; }
+
+        TextBox editor;
+
         void BuildControls(Window window)
         {
             var grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition());
             grid.RowDefinitions.Add(new RowDefinition());
-            var textbox = new TextBox { 
+            editor = new TextBox { 
                                               AcceptsReturn = true, 
                                               AcceptsTab = true, 
                                               Background = Brushes.Black, 
@@ -36,11 +44,20 @@ namespace Prose
                                               FontSize = 16.0,
                                               TabIndex = 0
                                               };
-            Grid.SetColumn(textbox, 0);
-            Grid.SetRow(textbox, 0);
-            grid.Children.Add(textbox);
+            Grid.SetColumn(editor, 0);
+            Grid.SetRow(editor, 0);
+            grid.Children.Add(editor);
             window.Content = grid;
-            textbox.Focus();
+            editor.Focus();
+        }
+
+        void SetContent()
+        {
+            if (string.IsNullOrEmpty(File) || !System.IO.File.Exists(File))
+                return;
+
+            var content = System.IO.File.ReadAllText(File);
+            editor.Text = content;
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -49,6 +66,7 @@ namespace Prose
 
              var window = new Window();
              BuildControls(window);
+             SetContent();
              window.Title = "Prose - because code should be beautiful...";
              window.Show();
         }
