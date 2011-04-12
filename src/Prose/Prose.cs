@@ -1,6 +1,7 @@
 // Prose.cs
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ namespace Prose
         [STAThread]
         public static void Main(string[] args)
         {
+			System.Console.WriteLine("tesT");
             var app = new ProseApplication();
 
             if (args.Length > 0)
@@ -48,6 +50,7 @@ namespace Prose
                              FontSize = 16.0,
                              TabIndex = 0
                          };
+			editor.KeyUp += EditorOnKeyUp;
             Grid.SetColumn(editor, 0);
             Grid.SetRow(editor, 0);
             grid.Children.Add(editor);
@@ -87,14 +90,41 @@ namespace Prose
              BuildControls(window);
              SetContent();
              window.Title = "Prose - because code should be beautiful...";
-             window.KeyDown += OnKeyDown;
+             window.KeyDown += WindowOnKeyDown;
              window.Show();
         }
 
-        void OnKeyDown(object sender, KeyEventArgs e)
+        void WindowOnKeyDown(object sender, KeyEventArgs e)
         {
             if ((Keyboard.Modifiers == ModifierKeys.Control) && (e.Key == Key.S))
                 WriteFile();
         }
+		
+		void EditorOnKeyUp(object sender, KeyEventArgs e)
+		{
+			//MessageBox.Show(e.Key.ToString());
+			//MessageBox.Show(string.Format("{0} len {1}", editor.SelectionStart, editor.SelectionLength));
+			//MessageBox.Show(string.Format("Selected Text: '{0}'", editor.SelectedText));
+
+			if (e.Key == Key.Tab)
+				HandleTab();
+			if (e.Key == Key.Enter)
+				HandleEnter();
+		}
+		
+		void HandleTab()
+		{
+			var oldSelectionStart = editor.SelectionStart;
+			editor.SelectionStart -= 1;
+			editor.SelectionLength = 1;
+			editor.SelectedText = @"    ";
+			editor.SelectionStart = oldSelectionStart + 3;
+			editor.SelectionLength = 0;
+		}
+		
+		void HandleEnter()
+		{
+			//MessageBox.Show(editor.Text.LastIndexOf("\r\n",editor.SelectionStart).ToString());
+		}
     }
 }
